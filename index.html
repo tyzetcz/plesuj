@@ -1,0 +1,30 @@
+<!doctype html><html lang="cs"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Plesy v Královéhradeckém kraji</title>
+<link rel="stylesheet" href="vendor/leaflet.css"><link rel="stylesheet" href="style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💃</text></svg>">
+</head><body>
+<header><a href="#/" class="brand"><span class="logo">✦</span> <span id="sitename"></span></a><p id="tagline"></p></header>
+<main id="home">
+ <section class="filters">
+  <input id="q" type="search" placeholder="Hledat název, obec, kapelu…">
+  <div class="row"><input id="psc" inputmode="numeric" maxlength="6" placeholder="PSČ (např. 500 03)">
+   <select id="radius"><option value="10">10 km</option><option value="25" selected>25 km</option><option value="50">50 km</option><option value="100">100 km</option></select>
+   <button id="geo" type="button" title="Použít moji polohu">📍 Moje poloha</button></div>
+  <div id="pscmsg" class="msg"></div>
+  <div class="row"><label>Od <input id="od" type="date"></label><label>Do <input id="do" type="date"></label></div>
+  <div class="row"><select id="typ"><option value="">Všechny typy</option></select>
+   <select id="kapela"><option value="">Všechny kapely</option></select>
+   <select id="sort"><option value="datum">Řadit: datum</option><option value="cena">Řadit: cena</option><option value="vzd">Řadit: vzdálenost</option></select></div>
+  <div class="row small"><label><input id="past" type="checkbox"> Zobrazit i proběhlé</label><button id="reset" type="button" class="link">Zrušit filtry</button></div>
+ </section>
+ <div id="map"></div>
+ <p id="count" class="msg"></p>
+ <ul id="list"></ul>
+</main>
+<main id="detail" hidden></main>
+<footer><p>Data sesbírána z veřejných zdrojů, ověřte u pořadatele.</p>
+<p>Chybí vám tu ples? <a id="addlink" href="#">Přidat ples</a> – pošlete nám název, datum, místo a odkaz.</p>
+<p class="small">Bez sledování a cookies. Mapa © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>.</p></footer>
+<script src="config.js"></script><script src="vendor/leaflet.js"></script><script src="app.js"></script>
+</body></html>
