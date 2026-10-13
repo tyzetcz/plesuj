@@ -34,3 +34,6 @@ a{color:var(--acc)}footer{color:var(--mut);font-size:.9rem;border-top:1px solid 
 .pin.approx{background:#b8892f}
 .plist{margin:6px 0 0;padding-left:16px}.plist li{margin:2px 0}
 #mapnote:empty{display:none}
+.thumb.poster{object-fit:cover;object-position:top}
+.plakat{margin:8px 0}.hero.poster{aspect-ratio:auto;max-height:80vh;width:auto;max-width:100%;margin:0 auto}
+.plakat figcaption{font-size:.85rem;color:var(--mut);text-align:center;margin-top:4px}

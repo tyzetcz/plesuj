@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """CSV plesů -> data/plesy.json ; obce -> data/psc.json. Spusť po každém novém sběru:
    python3 scripts/build_data.py [cesta_k_csv]"""
-import csv, json, re, sys, collections, pathlib
+import csv, json, re, sys, collections, pathlib, hashlib
 R = pathlib.Path(__file__).resolve().parent.parent
 src = sys.argv[1] if len(sys.argv) > 1 else "/workspace/plesy/plesy_cr.csv"
 def price(t):
@@ -20,6 +20,9 @@ with open(src, encoding="utf-8-sig") as f:
         d.update(id=i + 1, lat=lat, lon=lon, priblizne=approx, cena_num=price(r["cena_vstupenky"]),
                  zdroje=[u.strip() for u in r["zdroj_url"].split("|") if u.strip()])
         d.pop("zdroj_url", None)
+        k = hashlib.sha1(f"{r['nazev']}|{r['datum']}|{r['obec']}".encode()).hexdigest()[:12]
+        if r.get("plakat_url") and (R / f"img/plakaty/{k}.webp").exists(): d["plakat"] = k
+        else: d.pop("plakat_url", None); d.pop("plakat_zdroj", None)
         out.append(d)
 json.dump(out, open(R / "data/plesy.json", "w"), ensure_ascii=False, separators=(",", ":"))
 acc = collections.defaultdict(list)

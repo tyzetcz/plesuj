@@ -20,7 +20,7 @@ function filtered(){const f=st(),q=norm(f.q);
 const IMG=[["maturitni",/matur|absolvent|stužk/i],["hasicsky",/hasič|sdh|hasic/i],["myslivecky",/myslivec|myslivc|honeb|lovec/i],["rybarsky",/rybář|rybar|mrs|čPRS/i],["sportovni",/sport|sokol|tj |fotbal|hokej|orel|volejbal/i],["reprezentacni",/reprezenta|městsk|mestsk|královsk|společensk|benefič/i],["skolni",/škol|skol|dětsk|detsk|maškar|mašk|rodič|mš |zš /i]];
 function img(p){const t=(p.typ||"")+" ",n=p.nazev||"";for(const[k,r]of IMG)if(r.test(t))return k;for(const[k,r]of IMG)if(r.test(n))return k;return "spolkovy"}
 const IMGALT={maturitni:"maturitní ples",hasicsky:"hasičský ples",myslivecky:"myslivecký ples",rybarsky:"rybářský ples",sportovni:"sportovní ples",reprezentacni:"reprezentační ples",skolni:"školní ples",spolkovy:"ples"};
-const pic=(p,c)=>`<img class="${c}" src="img/typ/${img(p)}.webp" alt="Ilustrace: ${IMGALT[img(p)]}" loading="lazy" width="1200" height="630">`;
+const pic=(p,c)=>p.plakat?`<img class="${c} poster" src="img/plakaty/${p.plakat}${c=="thumb"?"_t":""}.webp" alt="Plakát: ${esc(p.nazev)}" loading="lazy">`:`<img class="${c}" src="img/typ/${img(p)}.webp" alt="Ilustrace: ${IMGALT[img(p)]}" loading="lazy" width="1200" height="630">`;
 function render(){const L=filtered();
  $("#count").textContent=`${L.length} ${L.length==1?"ples":L.length<5&&L.length?"plesy":"plesů"}`+(origin?` do ${$("#radius").value} km`:"");
  $("#list").innerHTML=L.map(p=>{const[,m,d]=p.datum.split("-");return `<li><a class="card${p.datum<today?" past":""}" href="#/ples/${p.id}">${pic(p,"thumb")}
@@ -49,7 +49,7 @@ function detail(id){const p=P.find(x=>x.id==id);if(!p)return go("#/");
  const rows=Object.keys(LBL).filter(k=>p[k]).map(k=>{let v=k=="datum"?`${dow(p.datum)} ${cz(p.datum)}`:esc(p[k]);
   if(k=="kapela_hudba")v=bands(p).map(b=>`<a href="#/kapela/${encodeURIComponent(b)}">${esc(b)}</a>`).join(", ")||v;return `<dt>${LBL[k]}</dt><dd>${v}</dd>`}).join("");
  const src=p.zdroje.map(u=>`<a href="${esc(u)}" target="_blank" rel="noopener">${esc(new URL(u).hostname.replace("www.",""))}</a>`).join(", ");
- $("#detail").innerHTML=`<a href="#/">← Zpět na seznam</a>${pic(p,"hero")}<h1>${esc(p.nazev)}</h1>${p.datum<today?"<p class='msg'>Tento ples už proběhl.</p>":""}
+ $("#detail").innerHTML=`<a href="#/">← Zpět na seznam</a>${p.plakat?`<figure class="plakat"><a href="img/plakaty/${p.plakat}.webp" target="_blank" rel="noopener">${pic(p,"hero")}</a><figcaption>Plakát: zdroj <a href="${esc(p.plakat_zdroj)}" target="_blank" rel="noopener">${esc(new URL(p.plakat_zdroj).hostname.replace("www.",""))}</a> · <a href="mailto:${S.email}?subject=${encodeURIComponent("Nahlásit / odstranit plakát: "+p.nazev+" ("+p.datum+")")}">Nahlásit / odstranit plakát</a></figcaption></figure>`:pic(p,"hero")}<h1>${esc(p.nazev)}</h1>${p.datum<today?"<p class='msg'>Tento ples už proběhl.</p>":""}
  <dl>${rows}${p.priblizne?"<dt>Poloha</dt><dd>přibližná poloha (střed obce)</dd>":""}${src?`<dt>Zdroj</dt><dd>${src}</dd>`:""}</dl>
  ${p.predprodej_odkaz?`<p><a class="btn" href="${esc(p.predprodej_odkaz)}" target="_blank" rel="noopener">🎟 Vstupenky / předprodej</a></p>`:""}${p.lat?'<div id="dmap"></div>':""}`;
  if(p.lat){const m=L_.map("dmap").setView([p.lat,p.lon],p.priblizne?13:16);tiles(m);L_.marker([p.lat,p.lon]).addTo(m)}}
