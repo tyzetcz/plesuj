@@ -1,2 +1,2 @@
 // Jediné místo pro název a kontakt webu
-window.SITE = { name: "Plesuj", tagline: "Plesy a bály v Královéhradeckém kraji", email: "zivrtomas@gmail.com" };
+window.SITE = { name: "Plesuj", tagline: "Plesy a bály v celé ČR", email: "zivrtomas@gmail.com" };
