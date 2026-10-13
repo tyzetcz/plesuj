@@ -33,7 +33,7 @@ function render(){const L=filtered();
  const nogps=L.length-[...G.values()].reduce((a,g)=>a+g.length,0);
  const mm=[];G.forEach(g=>{g.sort((a,b)=>a.datum.localeCompare(b.datum));const ap=g.some(p=>p.priblizne),n=g.length,ll=[+g[0].lat,+g[0].lon];pts.push(ll);
   const sz=n>1?30:18;const m=L_.marker(ll,{icon:L_.divIcon({className:"",html:`<div class="pin${ap?" approx":""}">${n>1?n:""}</div>`,iconSize:[sz,sz],iconAnchor:[sz/2,sz/2]})});m.options.n=n;
-  m.bindPopup(`<b>${esc([g[0].misto_budova,g[0].obec].filter(Boolean).join(", "))}</b>${n>1?` – ${n} plesů`:""}${ap?"<br><i>přibližná poloha</i>":""}<ul class="plist">${g.map(p=>`<li><a href="#/ples/${p.id}">${cz(p.datum)} – ${esc(p.nazev)}</a></li>`).join("")}</ul>`,{maxHeight:260});mm.push(m)});
+  m.bindPopup(`<b>${esc([g[0].misto_budova,g[0].obec].filter(Boolean).join(", "))}</b>${n>1?` – ${n} plesů`:""}${ap?"<br><i>přibližná poloha</i>":""}${n==1&&g[0].plakat?`<a href="#/ples/${g[0].id}"><img class="popimg" src="img/plakaty/${g[0].plakat}_t.webp" alt="Plakát: ${esc(g[0].nazev)}" loading="lazy"></a>`:""}<ul class="plist">${g.map(p=>`<li><a href="#/ples/${p.id}">${cz(p.datum)} – ${esc(p.nazev)}</a></li>`).join("")}</ul>`,{maxHeight:260});mm.push(m)});
  layer.addLayers(mm);
  $("#mapnote").textContent=nogps?`${nogps} ${nogps==1?"ples nemá":nogps<5?"plesy nemají":"plesů nemá"} známou polohu, na mapě ${nogps==1?"chybí":"chybí"} (jsou jen v seznamu).`:"";
  if(origin){L_.circle(origin,{radius:$("#radius").value*1000,color:"#7a1f4b",weight:1,fillOpacity:.04}).addTo(extra);pts.push(origin)}

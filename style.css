@@ -34,7 +34,9 @@ a{color:var(--acc)}footer{color:var(--mut);font-size:.9rem;border-top:1px solid 
 .pin.approx{background:#b8892f}
 .plist{margin:6px 0 0;padding-left:16px}.plist li{margin:2px 0}
 #mapnote:empty{display:none}
-.thumb.poster{object-fit:cover;object-position:top}
+.thumb.poster{object-fit:contain;background:#eee}
+.popimg{display:block;width:100%;max-width:220px;max-height:160px;object-fit:contain;margin:6px 0;border-radius:6px;background:#eee}
+.hero.poster{height:auto;object-fit:contain}
 .plakat{margin:8px 0}.hero.poster{aspect-ratio:auto;max-height:80vh;width:auto;max-width:100%;margin:0 auto}
 .plakat figcaption{font-size:.85rem;color:var(--mut);text-align:center;margin-top:4px}
 .tag.warn,.msg.warn{background:#fff3cd;color:#7a5a00}
