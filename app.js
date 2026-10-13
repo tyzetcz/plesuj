@@ -9,9 +9,9 @@ const norm=s=>(s||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCas
 let P=[],PSC={},origin=null,map,layer,extra;
 const LBL={typ:"Typ",datum:"Datum",cas_zacatku:"Začátek",misto_budova:"Místo",adresa:"Adresa",obec:"Obec",psc:"PSČ",cena_vstupenky:"Vstupné",kapela_hudba:"Hudba",poradatel:"Pořadatel",poznamka:"Poznámka"};
 function bands(p){return (p.kapela_hudba||"").split(/[,;+]| a /).map(s=>s.trim()).filter(s=>s&&s.length>1)}
-const st=()=>({q:$("#q").value,psc:$("#psc").value,r:$("#radius").value,od:$("#od").value,do:$("#do").value,typ:$("#typ").value,kap:$("#kapela").value,sort:$("#sort").value,past:$("#past").checked});
+const st=()=>({q:$("#q").value,psc:$("#psc").value,r:$("#radius").value,od:$("#od").value,do:$("#do").value,typ:$("#typ").value,kap:$("#kapela").value,sort:$("#sort").value,past:$("#past").checked,nev:$("#nev").checked});
 function filtered(){const f=st(),q=norm(f.q);
- let L=P.filter(p=>(f.past||p.datum>=today)&&(!f.od||p.datum>=f.od)&&(!f.do||p.datum<=f.do)&&(!f.typ||p.typ===f.typ)&&(!f.kap||bands(p).includes(f.kap))
+ let L=P.filter(p=>(f.past||p.datum>=today)&&(f.nev||p.overeno!==false)&&(!f.od||p.datum>=f.od)&&(!f.do||p.datum<=f.do)&&(!f.typ||p.typ===f.typ)&&(!f.kap||bands(p).includes(f.kap))
   &&(!q||norm([p.nazev,p.obec,p.kapela_hudba,p.misto_budova].join(" ")).includes(q)));
  L.forEach(p=>p.dist=origin&&p.lat?km(origin[0],origin[1],p.lat,p.lon):null);
  if(origin)L=L.filter(p=>p.dist!=null&&p.dist<=+f.r);
@@ -26,7 +26,7 @@ function render(){const L=filtered();
  $("#list").innerHTML=L.map(p=>{const[,m,d]=p.datum.split("-");return `<li><a class="card${p.datum<today?" past":""}" href="#/ples/${p.id}">${pic(p,"thumb")}
  <div class="date"><b>${+d}</b><span>${MES[m-1]}</span></div><div><h3>${esc(p.nazev)}</h3>
  <div class="meta">${dow(p.datum)} ${cz(p.datum)}${p.cas_zacatku?", "+esc(p.cas_zacatku):""} · ${esc([p.misto_budova,p.obec].filter(Boolean).join(", "))}</div>
- <div class="meta">${p.typ?`<span class="tag">${esc(p.typ)}</span>`:""}${p.cena_num!=null?esc(p.cena_vstupenky):"vstupné neuvedeno"}${p.kapela_hudba?" · 🎵 "+esc(p.kapela_hudba):""}
+ <div class="meta">${p.typ?`<span class="tag">${esc(p.typ)}</span>`:""}${p.overeno===false?`<span class="tag warn">místo neověřeno</span>`:""}${p.cena_num!=null?esc(p.cena_vstupenky):"vstupné neuvedeno"}${p.kapela_hudba?" · 🎵 "+esc(p.kapela_hudba):""}
  ${p.dist!=null?` · <span class="dist">${p.dist.toFixed(p.dist<10?1:0)} km${p.priblizne?" (přibl.)":""}</span>`:""}</div></div></a></li>`}).join("")||"<li class='msg'>Nic nenalezeno. Zkuste uvolnit filtry.</li>";
  layer.clearLayers();extra.clearLayers();const pts=[],G=new Map();
  L.forEach(p=>{if(p.lat==null||p.lon==null||p.lat==="")return;const k=(+p.lat).toFixed(5)+","+(+p.lon).toFixed(5);if(!G.has(k))G.set(k,[]);G.get(k).push(p)});
@@ -49,7 +49,7 @@ function detail(id){const p=P.find(x=>x.id==id);if(!p)return go("#/");
  const rows=Object.keys(LBL).filter(k=>p[k]).map(k=>{let v=k=="datum"?`${dow(p.datum)} ${cz(p.datum)}`:esc(p[k]);
   if(k=="kapela_hudba")v=bands(p).map(b=>`<a href="#/kapela/${encodeURIComponent(b)}">${esc(b)}</a>`).join(", ")||v;return `<dt>${LBL[k]}</dt><dd>${v}</dd>`}).join("");
  const src=p.zdroje.map(u=>`<a href="${esc(u)}" target="_blank" rel="noopener">${esc(new URL(u).hostname.replace("www.",""))}</a>`).join(", ");
- $("#detail").innerHTML=`<a href="#/">← Zpět na seznam</a>${p.plakat?`<figure class="plakat"><a href="img/plakaty/${p.plakat}.webp" target="_blank" rel="noopener">${pic(p,"hero")}</a><figcaption>Plakát: zdroj <a href="${esc(p.plakat_zdroj)}" target="_blank" rel="noopener">${esc(new URL(p.plakat_zdroj).hostname.replace("www.",""))}</a> · <a href="mailto:${S.email}?subject=${encodeURIComponent("Nahlásit / odstranit plakát: "+p.nazev+" ("+p.datum+")")}">Nahlásit / odstranit plakát</a></figcaption></figure>`:pic(p,"hero")}<h1>${esc(p.nazev)}</h1>${p.datum<today?"<p class='msg'>Tento ples už proběhl.</p>":""}
+ $("#detail").innerHTML=`<a href="#/">← Zpět na seznam</a>${p.plakat?`<figure class="plakat"><a href="img/plakaty/${p.plakat}.webp" target="_blank" rel="noopener">${pic(p,"hero")}</a><figcaption>Plakát: zdroj <a href="${esc(p.plakat_zdroj)}" target="_blank" rel="noopener">${esc(new URL(p.plakat_zdroj).hostname.replace("www.",""))}</a> · <a href="mailto:${S.email}?subject=${encodeURIComponent("Nahlásit / odstranit plakát: "+p.nazev+" ("+p.datum+")")}">Nahlásit / odstranit plakát</a></figcaption></figure>`:pic(p,"hero")}<h1>${esc(p.nazev)}</h1>${p.overeno===false?"<p class='msg warn'>⚠ Místo konání se nepodařilo ověřit ze zdroje. Ověřte u pořadatele.</p>":""}${p.datum<today?"<p class='msg'>Tento ples už proběhl.</p>":""}
  <dl>${rows}${p.priblizne?"<dt>Poloha</dt><dd>přibližná poloha (střed obce)</dd>":""}${src?`<dt>Zdroj</dt><dd>${src}</dd>`:""}</dl>
  ${p.predprodej_odkaz?`<p><a class="btn" href="${esc(p.predprodej_odkaz)}" target="_blank" rel="noopener">🎟 Vstupenky / předprodej</a></p>`:""}${p.lat?'<div id="dmap"></div>':""}`;
  if(p.lat){const m=L_.map("dmap").setView([p.lat,p.lon],p.priblizne?13:16);tiles(m);L_.marker([p.lat,p.lon]).addTo(m)}}
@@ -67,7 +67,7 @@ Promise.all([fetch("data/plesy.json").then(r=>r.json()),fetch("data/psc.json").t
  map=L_.map("map").setView([50.35,15.9],9);tiles(map);layer=L_.markerClusterGroup({maxClusterRadius:45,spiderfyOnMaxZoom:false,disableClusteringAtZoom:13,iconCreateFunction:c=>{const t=c.getAllChildMarkers().reduce((a,m)=>a+(m.options.n||1),0);return L_.divIcon({html:`<div><span>${t}</span></div>`,className:"marker-cluster marker-cluster-"+(t<10?"small":t<100?"medium":"large"),iconSize:[40,40]})}}).addTo(map);extra=L_.layerGroup().addTo(map);
  const u=new URLSearchParams(location.search),set=(id,k)=>u.has(k)&&($(id).value=u.get(k));
  set("#q","q");set("#psc","psc");set("#radius","r");set("#od","od");set("#do","do");set("#typ","typ");set("#kapela","kap");set("#sort","sort");$("#past").checked=u.get("past")=="true";
- ["#q","#od","#do","#typ","#kapela","#sort","#past"].forEach(s=>$(s).addEventListener("input",render));
+ ["#q","#od","#do","#typ","#kapela","#sort","#past","#nev"].forEach(s=>$(s).addEventListener("input",render));
  $("#psc").addEventListener("input",setPsc);$("#radius").addEventListener("input",()=>origin?render():setPsc());
  $("#geo").onclick=()=>{if(!navigator.geolocation)return $("#pscmsg").textContent="Prohlížeč polohu nepodporuje.";$("#pscmsg").textContent="Zjišťuji polohu…";
   navigator.geolocation.getCurrentPosition(p=>{origin=[p.coords.latitude,p.coords.longitude];$("#psc").value="";$("#pscmsg").textContent="Vzdálenost od vaší polohy";$("#sort").value="vzd";render()},()=>$("#pscmsg").textContent="Polohu se nepodařilo zjistit.")};

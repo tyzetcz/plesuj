@@ -37,3 +37,4 @@ a{color:var(--acc)}footer{color:var(--mut);font-size:.9rem;border-top:1px solid 
 .thumb.poster{object-fit:cover;object-position:top}
 .plakat{margin:8px 0}.hero.poster{aspect-ratio:auto;max-height:80vh;width:auto;max-width:100%;margin:0 auto}
 .plakat figcaption{font-size:.85rem;color:var(--mut);text-align:center;margin-top:4px}
+.tag.warn,.msg.warn{background:#fff3cd;color:#7a5a00}

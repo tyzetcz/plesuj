@@ -19,8 +19,9 @@ with open(src, encoding="utf-8-sig") as f:
         d = {k: v for k, v in r.items() if v and k not in ("gps_lat", "gps_lon")}
         d.update(id=i + 1, lat=lat, lon=lon, priblizne=approx, cena_num=price(r["cena_vstupenky"]),
                  zdroje=[u.strip() for u in r["zdroj_url"].split("|") if u.strip()])
-        d.pop("zdroj_url", None)
-        k = hashlib.sha1(f"{r['nazev']}|{r['datum']}|{r['obec']}".encode()).hexdigest()[:12]
+        d.pop("zdroj_url", None); d.pop("kod", None); d.pop("plakat_kod", None)
+        d["overeno"] = r.get("overeno", "ano") != "ne"
+        k = r.get("plakat_kod") or hashlib.sha1(f"{r['nazev']}|{r['datum']}|{r['obec']}".encode()).hexdigest()[:12]
         if r.get("plakat_url") and (R / f"img/plakaty/{k}.webp").exists(): d["plakat"] = k
         else: d.pop("plakat_url", None); d.pop("plakat_zdroj", None)
         out.append(d)
