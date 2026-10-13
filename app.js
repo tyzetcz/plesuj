@@ -6,7 +6,7 @@ const cz=d=>{const[y,m,dd]=d.split("-").map(Number);return `${dd}. ${m}. ${y}`},
 const today=new Date().toISOString().slice(0,10);
 const km=(a,b,c,d)=>{const r=Math.PI/180,x=Math.sin((c-a)*r/2)**2+Math.cos(a*r)*Math.cos(c*r)*Math.sin((d-b)*r/2)**2;return 12742*Math.asin(Math.sqrt(x))};
 const norm=s=>(s||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
-let P=[],PSC={},origin=null,map,layer;
+let P=[],PSC={},origin=null,map,layer,extra;
 const LBL={typ:"Typ",datum:"Datum",cas_zacatku:"Začátek",misto_budova:"Místo",adresa:"Adresa",obec:"Obec",psc:"PSČ",cena_vstupenky:"Vstupné",kapela_hudba:"Hudba",poradatel:"Pořadatel",poznamka:"Poznámka"};
 function bands(p){return (p.kapela_hudba||"").split(/[,;+]| a /).map(s=>s.trim()).filter(s=>s&&s.length>1)}
 const st=()=>({q:$("#q").value,psc:$("#psc").value,r:$("#radius").value,od:$("#od").value,do:$("#do").value,typ:$("#typ").value,kap:$("#kapela").value,sort:$("#sort").value,past:$("#past").checked});
@@ -28,10 +28,15 @@ function render(){const L=filtered();
  <div class="meta">${dow(p.datum)} ${cz(p.datum)}${p.cas_zacatku?", "+esc(p.cas_zacatku):""} · ${esc([p.misto_budova,p.obec].filter(Boolean).join(", "))}</div>
  <div class="meta">${p.typ?`<span class="tag">${esc(p.typ)}</span>`:""}${p.cena_num!=null?esc(p.cena_vstupenky):"vstupné neuvedeno"}${p.kapela_hudba?" · 🎵 "+esc(p.kapela_hudba):""}
  ${p.dist!=null?` · <span class="dist">${p.dist.toFixed(p.dist<10?1:0)} km${p.priblizne?" (přibl.)":""}</span>`:""}</div></div></a></li>`}).join("")||"<li class='msg'>Nic nenalezeno. Zkuste uvolnit filtry.</li>";
- layer.clearLayers();const pts=[];
- L.filter(p=>p.lat).forEach(p=>{pts.push([p.lat,p.lon]);L_.circleMarker([p.lat,p.lon],{radius:8,color:"#fff",weight:2,fillColor:p.priblizne?"#b8892f":"#7a1f4b",fillOpacity:.9})
-  .bindPopup(`<b>${esc(p.nazev)}</b><br>${cz(p.datum)} · ${esc(p.obec||"")}${p.priblizne?"<br><i>přibližná poloha</i>":""}<br><a href="#/ples/${p.id}">Detail »</a>`).addTo(layer)});
- if(origin){L_.circle(origin,{radius:$("#radius").value*1000,color:"#7a1f4b",weight:1,fillOpacity:.04}).addTo(layer);pts.push(origin)}
+ layer.clearLayers();extra.clearLayers();const pts=[],G=new Map();
+ L.forEach(p=>{if(p.lat==null||p.lon==null||p.lat==="")return;const k=(+p.lat).toFixed(5)+","+(+p.lon).toFixed(5);if(!G.has(k))G.set(k,[]);G.get(k).push(p)});
+ const nogps=L.length-[...G.values()].reduce((a,g)=>a+g.length,0);
+ const mm=[];G.forEach(g=>{g.sort((a,b)=>a.datum.localeCompare(b.datum));const ap=g.some(p=>p.priblizne),n=g.length,ll=[+g[0].lat,+g[0].lon];pts.push(ll);
+  const sz=n>1?30:18;const m=L_.marker(ll,{icon:L_.divIcon({className:"",html:`<div class="pin${ap?" approx":""}">${n>1?n:""}</div>`,iconSize:[sz,sz],iconAnchor:[sz/2,sz/2]})});m.options.n=n;
+  m.bindPopup(`<b>${esc([g[0].misto_budova,g[0].obec].filter(Boolean).join(", "))}</b>${n>1?` – ${n} plesů`:""}${ap?"<br><i>přibližná poloha</i>":""}<ul class="plist">${g.map(p=>`<li><a href="#/ples/${p.id}">${cz(p.datum)} – ${esc(p.nazev)}</a></li>`).join("")}</ul>`,{maxHeight:260});mm.push(m)});
+ layer.addLayers(mm);
+ $("#mapnote").textContent=nogps?`${nogps} ${nogps==1?"ples nemá":nogps<5?"plesy nemají":"plesů nemá"} známou polohu, na mapě ${nogps==1?"chybí":"chybí"} (jsou jen v seznamu).`:"";
+ if(origin){L_.circle(origin,{radius:$("#radius").value*1000,color:"#7a1f4b",weight:1,fillOpacity:.04}).addTo(extra);pts.push(origin)}
  if(pts.length)map.fitBounds(pts,{padding:[20,20],maxZoom:12});
  const u=new URLSearchParams();Object.entries(st()).forEach(([k,v])=>{if(v&&!(k=="r"&&v=="25")&&!(k=="sort"&&v=="datum"))u.set(k,v)});history.replaceState(null,"",(u+""?"?"+u:location.pathname)+location.hash)}
 const L_=window.L;
@@ -59,7 +64,7 @@ function route(){const h=decodeURIComponent(location.hash.slice(1)),d=$("#detail
 Promise.all([fetch("data/plesy.json").then(r=>r.json()),fetch("data/psc.json").then(r=>r.json())]).then(([a,b])=>{P=a.filter(p=>p.datum);PSC=b;
  [...new Set(P.map(p=>p.typ).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"cs")).forEach(t=>$("#typ").add(new Option(t,t)));
  [...new Set(P.flatMap(bands))].sort((a,b)=>a.localeCompare(b,"cs")).forEach(t=>$("#kapela").add(new Option(t,t)));
- map=L_.map("map").setView([50.35,15.9],9);tiles(map);layer=L_.layerGroup().addTo(map);
+ map=L_.map("map").setView([50.35,15.9],9);tiles(map);layer=L_.markerClusterGroup({maxClusterRadius:45,spiderfyOnMaxZoom:false,disableClusteringAtZoom:13,iconCreateFunction:c=>{const t=c.getAllChildMarkers().reduce((a,m)=>a+(m.options.n||1),0);return L_.divIcon({html:`<div><span>${t}</span></div>`,className:"marker-cluster marker-cluster-"+(t<10?"small":t<100?"medium":"large"),iconSize:[40,40]})}}).addTo(map);extra=L_.layerGroup().addTo(map);
  const u=new URLSearchParams(location.search),set=(id,k)=>u.has(k)&&($(id).value=u.get(k));
  set("#q","q");set("#psc","psc");set("#radius","r");set("#od","od");set("#do","do");set("#typ","typ");set("#kapela","kap");set("#sort","sort");$("#past").checked=u.get("past")=="true";
  ["#q","#od","#do","#typ","#kapela","#sort","#past"].forEach(s=>$(s).addEventListener("input",render));

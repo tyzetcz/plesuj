@@ -1,7 +1,7 @@
 <!doctype html><html lang="cs"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Plesuj – plesy a bály v celé ČR</title>
-<link rel="stylesheet" href="vendor/leaflet.css"><link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="vendor/leaflet.css"><link rel="stylesheet" href="vendor/MarkerCluster.css"><link rel="stylesheet" href="vendor/MarkerCluster.Default.css"><link rel="stylesheet" href="style.css">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💃</text></svg>">
 </head><body>
 <header><a href="#/" class="brand"><span class="logo">✦</span> <span id="sitename"></span></a><p id="tagline"></p></header>
@@ -18,7 +18,7 @@
    <select id="sort"><option value="datum">Řadit: datum</option><option value="cena">Řadit: cena</option><option value="vzd">Řadit: vzdálenost</option></select></div>
   <div class="row small"><label><input id="past" type="checkbox"> Zobrazit i proběhlé</label><button id="reset" type="button" class="link">Zrušit filtry</button></div>
  </section>
- <div id="map"></div>
+ <div id="map"></div><p id="mapnote" class="small"></p>
  <p id="count" class="msg"></p>
  <ul id="list"></ul>
 </main>
@@ -26,5 +26,5 @@
 <footer><p>Data sesbírána z veřejných zdrojů, ověřte u pořadatele.</p>
 <p>Chybí vám tu ples? <a id="addlink" href="#">Přidat ples</a> – pošlete nám název, datum, místo a odkaz.</p>
 <p class="small">Bez sledování a cookies. Mapa © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>.</p></footer>
-<script src="config.js"></script><script src="vendor/leaflet.js"></script><script src="app.js"></script>
+<script src="config.js"></script><script src="vendor/leaflet.js"></script><script src="vendor/leaflet.markercluster.js"></script><script src="app.js"></script>
 </body></html>
