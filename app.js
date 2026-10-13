@@ -44,7 +44,7 @@ function setPsc(){const v=$("#psc").value.replace(/\s/g,"");$("#pscmsg").textCon
  if(!v){origin=null;return render()}if(!/^\d{5}$/.test(v)){origin=null;if(v.length>=5)$("#pscmsg").textContent="PSČ má 5 číslic.";return render()}
  let hit=PSC[v],note="";if(!hit){const near=Object.keys(PSC).filter(k=>k.slice(0,3)==v.slice(0,3)).sort((a,b)=>Math.abs(a-v)-Math.abs(b-v))[0];if(near){hit=PSC[near];note=" (nejbližší známé PSČ "+near+")"}}
  if(!hit){origin=null;$("#pscmsg").textContent="Toto PSČ neznám.";return render()}
- origin=[hit[0],hit[1]];$("#pscmsg").textContent="Vzdálenost od: "+hit[2]+note;if($("#sort").value=="datum")$("#sort").value="vzd";render()}
+ origin=[hit[0],hit[1]];$("#pscmsg").textContent="Vzdálenost od: "+hit[2]+note;render()}
 function detail(id){const p=P.find(x=>x.id==id);if(!p)return go("#/");
  const rows=Object.keys(LBL).filter(k=>p[k]).map(k=>{let v=k=="datum"?`${dow(p.datum)} ${cz(p.datum)}`:esc(p[k]);
   if(k=="kapela_hudba")v=bands(p).map(b=>`<a href="#/kapela/${encodeURIComponent(b)}">${esc(b)}</a>`).join(", ")||v;return `<dt>${LBL[k]}</dt><dd>${v}</dd>`}).join("");
@@ -70,6 +70,6 @@ Promise.all([fetch("data/plesy.json").then(r=>r.json()),fetch("data/psc.json").t
  ["#q","#od","#do","#typ","#kapela","#sort","#past","#nev"].forEach(s=>$(s).addEventListener("input",render));
  $("#psc").addEventListener("input",setPsc);$("#radius").addEventListener("input",()=>origin?render():setPsc());
  $("#geo").onclick=()=>{if(!navigator.geolocation)return $("#pscmsg").textContent="Prohlížeč polohu nepodporuje.";$("#pscmsg").textContent="Zjišťuji polohu…";
-  navigator.geolocation.getCurrentPosition(p=>{origin=[p.coords.latitude,p.coords.longitude];$("#psc").value="";$("#pscmsg").textContent="Vzdálenost od vaší polohy";$("#sort").value="vzd";render()},()=>$("#pscmsg").textContent="Polohu se nepodařilo zjistit.")};
+  navigator.geolocation.getCurrentPosition(p=>{origin=[p.coords.latitude,p.coords.longitude];$("#psc").value="";$("#pscmsg").textContent="Vzdálenost od vaší polohy";render()},()=>$("#pscmsg").textContent="Polohu se nepodařilo zjistit.")};
  $("#reset").onclick=()=>{["#q","#psc","#od","#do","#typ","#kapela"].forEach(s=>$(s).value="");$("#sort").value="datum";$("#radius").value="25";$("#past").checked=false;origin=null;$("#pscmsg").textContent="";render()};
  window.addEventListener("hashchange",route);if($("#psc").value)setPsc();route()});
