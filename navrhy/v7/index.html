@@ -1,0 +1,22 @@
+<!doctype html><html lang="cs"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Plesuj Mapa — plesy kolem vás</title><meta name="description" content="Mapa všech plesů a bálů v ČR. Posuňte mapu, zvolte termín a projděte plakáty jako příběhy.">
+<meta property="og:title" content="Plesuj Mapa"><meta property="og:description" content="Plesy kolem vás na jedné mapě."><meta property="og:locale" content="cs_CZ"><meta name="theme-color" content="#111111">
+<link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png">
+<link rel="stylesheet" href="../../vendor/leaflet.css"><link rel="stylesheet" href="../../vendor/MarkerCluster.css"><link rel="stylesheet" href="../../vendor/MarkerCluster.Default.css"><link rel="stylesheet" href="style.css"></head><body>
+<a class="skip" href="#panel">Přeskočit na seznam plesů</a>
+<div id="map" role="region" aria-label="Mapa plesů"></div>
+<header class="top"><a class="brand" href="#/" aria-label="Plesuj Mapa – úvod">plesuj<span>●</span></a>
+<button class="search" id="openK" aria-haspopup="dialog"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span id="sq">Kde a kdy chcete tančit?</span><kbd>Ctrl K</kbd></button>
+<nav class="tn" aria-label="Hlavní"><button id="stories" class="pillb">▶ Příběhy</button><a href="#/vecer" class="pillb">♥ Můj večer <sup id="fc"></sup></a><a href="../" class="pillb ghost">Návrhy</a><button id="install" class="pillb" hidden>Instalovat</button></nav></header>
+<section id="panel" class="panel" aria-label="Seznam plesů" tabindex="-1"><div class="grab" aria-hidden="true"></div>
+<div class="ph1"><div><b id="cnt">…</b><span id="ctx"></span></div><label class="sw"><input type="checkbox" id="inview" checked> jen ve výřezu mapy</label></div>
+<div class="chips" id="chips"></div>
+<div class="scrub" id="scrub" aria-label="Termín"><div class="hist" id="hist"></div><input type="range" id="d1" min="0" max="100" value="0" aria-label="Od data"><input type="range" id="d2" min="0" max="100" value="100" aria-label="Do data"><div class="dl"><span id="d1l"></span><span id="d2l"></span></div></div>
+<div class="row2"><select id="sort" aria-label="Řazení"><option value="datum">Podle data</option><option value="vzd">Nejblíž středu mapy</option><option value="cena">Nejlevnější</option></select><select id="cena" aria-label="Vstupné"><option value="">Vstupné: jakékoli</option><option value="0">zdarma</option><option value="150">do 150 Kč</option><option value="300">do 300 Kč</option></select><button class="tg" id="ver" aria-pressed="false">jen ověřené místo</button><button class="tg" id="ics">↓ .ics</button></div>
+<ol id="list" class="list"></ol><div id="sent"></div></section>
+<aside id="sheet" class="sheet" hidden aria-label="Detail plesu"></aside>
+<div id="cmdk" class="cmdk" hidden role="dialog" aria-modal="true" aria-label="Hledat"><div class="kbox"><div class="kin"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="kq" placeholder="Obec, PSČ, kraj, typ nebo název plesu…" role="combobox" aria-expanded="true" aria-controls="kres" aria-autocomplete="list"><kbd>Esc</kbd></div><div id="kres" role="listbox"></div><div class="khint">↑↓ výběr · Enter potvrdit · zkuste „50002“, „Brno“, „myslivecký“</div></div></div>
+<div id="st" class="st" hidden role="dialog" aria-modal="true" aria-label="Příběhy plakátů"></div>
+<div id="page" class="page" hidden></div>
+<div id="toast" role="status" aria-live="polite"></div>
+<script src="../../vendor/leaflet.js"></script><script src="../../vendor/leaflet.markercluster.js"></script><script src="../shared/core.js"></script><script src="app.js"></script></body></html>

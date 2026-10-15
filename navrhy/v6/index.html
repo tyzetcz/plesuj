@@ -1,0 +1,19 @@
+<!doctype html><html lang="cs"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Plesový almanach – Plesuj</title>
+<meta name="description" content="Plesový almanach: všechny plesy a bály v ČR týden po týdnu. Hledání podle PSČ, kraje a typu, mapa, kalendář a vlastní program.">
+<meta property="og:title" content="Plesový almanach – Plesuj"><meta property="og:description" content="Plesy a bály v celé ČR týden po týdnu."><meta property="og:type" content="website"><meta property="og:locale" content="cs_CZ"><meta name="theme-color" content="#f4efe6">
+<link rel="canonical" href="https://tyzetcz.github.io/plesuj/navrhy/v6/">
+<link rel="stylesheet" href="../../vendor/leaflet.css"><link rel="stylesheet" href="../../vendor/MarkerCluster.css"><link rel="stylesheet" href="../../vendor/MarkerCluster.Default.css"><link rel="stylesheet" href="style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>❦</text></svg>">
+<script>document.documentElement.dataset.theme=localStorage.getItem("plesuj_theme")||(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light")</script></head><body>
+<a class="skip" href="#main">Přeskočit na obsah</a>
+<header class="mast"><div class="mtop"><span id="today"></span><span class="mr"><button id="theme" class="tbtn" aria-label="Přepnout tmavý režim">◐</button><a href="../">Návrhy</a></span></div>
+<a class="logo" href="#/">Plesový almanach</a><p class="claim">Plesy a bály v celé České republice, týden po týdnu</p>
+<nav class="mnav" aria-label="Hlavní"><a href="#/">Úvod</a><a href="#/hledat">Hledat</a><a href="#/tyden">Týden</a><a href="#/kalendar">Kalendář</a><a href="#/mapa">Mapa</a><a href="#/kraje">Kraje</a><a href="#/program">Můj program <span id="fc" class="pill"></span></a></nav></header>
+<nav class="crumbs" id="crumbs" aria-label="Drobečková navigace"></nav>
+<main id="main" tabindex="-1"><p class="load">Načítám almanach…</p></main>
+<nav class="tabbar" aria-label="Mobilní navigace"><a href="#/">⌂<span>Úvod</span></a><a href="#/hledat">⌕<span>Hledat</span></a><a href="#/tyden">▤<span>Týden</span></a><a href="#/mapa">◎<span>Mapa</span></a><a href="#/program">♡<span>Program</span></a></nav>
+<div id="toast" role="status" aria-live="polite"></div>
+<footer class="foot"><p>Údaje přebíráme z oficiálních stránek pořadatelů, obcí a škol. Plakáty patří pořadatelům, na požádání je odstraníme.</p></footer>
+<script type="application/ld+json" id="ld"></script>
+<script src="../../vendor/leaflet.js"></script><script src="../../vendor/leaflet.markercluster.js"></script><script src="../shared/core.js"></script><script src="app.js"></script></body></html>

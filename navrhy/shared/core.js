@@ -47,8 +47,24 @@ const FAV="plesuj_oblibene";
 const favs={get:()=>{try{return JSON.parse(localStorage.getItem(FAV)||"[]")}catch(e){return[]}},has:id=>favs.get().includes(+id),
  toggle:id=>{id=+id;let f=favs.get();f=f.includes(id)?f.filter(x=>x!==id):[...f,id];localStorage.setItem(FAV,JSON.stringify(f));return f.includes(id)}};
 async function load(){const[a,b,k]=await Promise.all([fetch(B+"data/plesy.json").then(r=>r.json()),fetch(B+"data/psc.json").then(r=>r.json()),fetch(B+"navrhy/shared/kraje.json").then(r=>r.json())]);
- PSC=b;const P=a.filter(p=>p.datum);P.forEach(p=>{p.kraj=k[p.id]||null;p._s=norm([p.nazev,p.obec,p.kapela_hudba,p.misto_budova,p.typ,p.poradatel,p.kraj].join(" "))});return P}
+ PSC=b;const P=a.filter(p=>p.datum).sort((x,y)=>x.datum.localeCompare(y.datum)||(x.cas_zacatku||"").localeCompare(y.cas_zacatku||""));P.forEach(p=>{p.kraj=k[p.id]||null;p.titul=title(p);p._s=norm([p.nazev,p.obec,p.kapela_hudba,p.misto_budova,p.typ,p.poradatel,p.kraj].join(" "))});return P}
 const tiles=(L,m)=>L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap"}).addTo(m);
 const types=P=>{const c={};P.forEach(p=>p.typ&&(c[p.typ]=(c[p.typ]||0)+1));return Object.entries(c).sort((a,b)=>b[1]-a[1])};
-window.PC={B,esc,norm,MES,MESL,MES2,DNY,today,cz,czl,dow,km,plural,nPlesu,bands,kind,poster,illu,imgOf,host,place,slug,pscLookup,filter,ics,downloadIcs,favs,load,tiles,types,get PSC(){return PSC}};
+
+/* Titulek bez místa konání (místo patří do vlastního pole) */
+const EMO=/[\u{1F000}-\u{1FAFF}\u2600-\u27BF\uFE0F\u200D\u{1F3FB}-\u{1F3FF}]+/gu;
+const VW=/sokolovn|kulturn|\bKD\b|\bDK\b|sál|hotel\b|hotelu|restaura|hospod|hostin|zámk|zámek|zbrojnic|tělocvičn|společensk|obecní d|národní d|beseda|orlovn|club|klub|palác|dům|domě/i;
+function title(p){let t=(p.nazev||"").replace(EMO," ").replace(/\s+/g," ").trim();const strip=()=>{const m=p.misto_budova;if(!m)return;const i=norm(t).indexOf(norm(m));
+  if(i>3&&i+m.length>=t.length-6){const pre=t.slice(0,i);if(/(?:[\/·|–—@-]|\b(?:v|ve|na|do))\s*$/i.test(pre)&&(VW.test(m)||/[\/·|–—@]\s*$/.test(pre)))t=pre.replace(/\s*(?:[\/·|–—@,(-]|\b(?:v|ve|na|do))\s*$/i,"").trim()}};
+ t=t.replace(/\s*[\/·|]\s*([^\/·|]+)$/,(s,x)=>norm(x).trim()==norm(p.obec)?"":s);strip();
+ const t2=t.replace(/\s+(?:v|ve)\s+(?:sokolovně|kulturním domě|KD\b|DK\b|sále\b|hotelu|restauraci|hospodě|hostinci|zámku|hasičské zbrojnici|tělocvičně|společenském|obecním domě|národním domě|Besedě|orlovně|Parlament Clubu)[^]*$/i,"").trim();
+ if(t2.length>=4)t=t2;t=t.replace(/[\s\/·|,–-]+$/,"").trim();return t||p.nazev}
+/* Plakát: nejvyšší rozlišení, ohnisko pro 3:4 výřez */
+function pimg(p){if(!p.plakat)return null;const w=p.plakat_w||3,h=p.plakat_h||4,r=h/w;
+ return{src:`${B}img/plakaty/${p.plakat}.webp`,w,h,portrait:r>=1.05,pos:r>1.6?"50% 22%":r>1.2?"50% 38%":"50% 50%",fit:r<1.05?"contain":"cover"}}
+function posterHTML(p,alt){const i=pimg(p);if(!i)return `<img src="${illu(p)}" alt="" loading="lazy" decoding="async" style="object-fit:cover">`;
+ return `${i.fit=="contain"?`<img class="pbg" src="${i.src}" alt="" aria-hidden="true" loading="lazy">`:""}<img class="pimg" src="${i.src}" width="${i.w}" height="${i.h}" alt="${alt===false?"":"Plakát: "+esc(title(p))}" loading="lazy" decoding="async" style="object-fit:${i.fit};object-position:${i.pos}">`}
+const portraitFirst=L=>L.slice().sort((a,b)=>(pimg(b)?.portrait?1:0)-(pimg(a)?.portrait?1:0));
+
+window.PC={title,pimg,posterHTML,portraitFirst,B,esc,norm,MES,MESL,MES2,DNY,today,cz,czl,dow,km,plural,nPlesu,bands,kind,poster,illu,imgOf,host,place,slug,pscLookup,filter,ics,downloadIcs,favs,load,tiles,types,get PSC(){return PSC}};
 })();
