@@ -3,6 +3,20 @@
    python3 scripts/build_data.py [cesta_k_csv]"""
 import csv, json, re, sys, collections, pathlib, hashlib
 R = pathlib.Path(__file__).resolve().parent.parent
+
+_AGG = re.compile(
+    r"(?:^|://|www\.)(?:kdykam\.com|vikendo\.cz|deertone\.(?:com|cz)|kultura365\.cz|kudyznudy\.cz)",
+    re.I,
+)
+def _zdroje(s):
+    urls = [u.strip() for u in (s or "").split("|") if u.strip()]
+    non = [u for u in urls if not _AGG.search(u)]
+    keep = non or urls  # aggregator only when nothing else exists
+    out, seen = [], set()
+    for u in keep:
+        if u not in seen:
+            seen.add(u); out.append(u)
+    return out
 src = sys.argv[1] if len(sys.argv) > 1 else "/workspace/plesy/plesy_cr.csv"
 def price(t):
     t2 = re.sub(r"\([^)]*\)", "", t or "")
@@ -18,7 +32,7 @@ with open(src, encoding="utf-8-sig") as f:
         approx = bool(re.search(r"přibližn|střed obce", r["poznamka"], re.I))
         d = {k: v for k, v in r.items() if v and k not in ("gps_lat", "gps_lon")}
         d.update(id=i + 1, lat=lat, lon=lon, priblizne=approx, cena_num=price(r["cena_vstupenky"]),
-                 zdroje=[u.strip() for u in r["zdroj_url"].split("|") if u.strip()])
+                 zdroje=_zdroje(r["zdroj_url"]))
         d.pop("zdroj_url", None); d.pop("kod", None); d.pop("plakat_kod", None); d.pop("nazev_puvodni", None)
         d["overeno"] = r.get("overeno", "ano") != "ne"
         k = r.get("plakat_kod") or hashlib.sha1(f"{r['nazev']}|{r['datum']}|{r['obec']}".encode()).hexdigest()[:12]
