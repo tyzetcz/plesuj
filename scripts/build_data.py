@@ -36,7 +36,12 @@ with open(src, encoding="utf-8-sig") as f:
         d.pop("zdroj_url", None); d.pop("kod", None); d.pop("plakat_kod", None); d.pop("nazev_puvodni", None)
         d["overeno"] = r.get("overeno", "ano") != "ne"
         k = r.get("plakat_kod") or hashlib.sha1(f"{r['nazev']}|{r['datum']}|{r['obec']}".encode()).hexdigest()[:12]
-        if r.get("plakat_url") and (R / f"img/plakaty/{k}.webp").exists(): d["plakat"] = k
+        if r.get("plakat_url") and (R / f"img/plakaty/{k}.webp").exists():
+            d["plakat"] = k
+            try:
+                from PIL import Image
+                with Image.open(R / f"img/plakaty/{k}.webp") as _im: d["plakat_w"], d["plakat_h"] = _im.size
+            except Exception: pass
         else: d.pop("plakat_url", None); d.pop("plakat_zdroj", None)
         out.append(d)
 json.dump(out, open(R / "data/plesy.json", "w"), ensure_ascii=False, separators=(",", ":"))
