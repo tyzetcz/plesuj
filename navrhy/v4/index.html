@@ -1,0 +1,16 @@
+<!doctype html><html lang="cs"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Plesuj — Každý ples v Česku</title>
+<meta name="description" content="Objevte plesy a bály v celé ČR. Chytré hledání, mapa, kalendář sezóny, plakáty od pořadatelů a doporučení přímo pro vás.">
+<meta property="og:title" content="Plesuj — Každý ples v Česku"><meta property="og:description" content="Plesová sezóna na jednom místě."><meta property="og:type" content="website"><meta property="og:locale" content="cs_CZ">
+<meta name="theme-color" content="#0b0812"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-192.png"><meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="icon" href="icon-192.png">
+<link rel="stylesheet" href="../../vendor/leaflet.css"><link rel="stylesheet" href="../../vendor/MarkerCluster.css"><link rel="stylesheet" href="../../vendor/MarkerCluster.Default.css"><link rel="stylesheet" href="style.css"></head><body>
+<a class="skip" href="#app">Přeskočit na obsah</a>
+<header class="nav" id="nav"><a class="logo" href="#/" aria-label="Plesuj – úvod"><svg viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="g" x1="0" x2="1"><stop stop-color="#ffd27a"/><stop offset="1" stop-color="#ff5fa2"/></linearGradient></defs><path fill="url(#g)" d="M16 2l3.6 9.4L29 13l-7.4 6.2L24 29l-8-5.3L8 29l2.4-9.8L3 13l9.4-1.6z"/></svg><span>Plesuj</span></a>
+<nav aria-label="Hlavní"><a href="#/objevit">Objevovat</a><a href="#/sezona">Sezóna</a><a href="#/kraje">Kraje</a><a href="#/oblibene" class="favlink">Oblíbené<sup id="fc"></sup></a></nav>
+<div class="navr"><button id="install" class="ghost" hidden>Nainstalovat</button><a class="ghost sm" href="../">Návrhy</a></div></header>
+<main id="app" tabindex="-1"><div class="boot"><div class="spin"></div></div></main>
+<div id="lb" class="lb" hidden role="dialog" aria-modal="true" aria-label="Plakát"><button class="lbx" aria-label="Zavřít">×</button><button class="lbp" aria-label="Předchozí">‹</button><figure><img alt=""><figcaption></figcaption></figure><button class="lbn" aria-label="Další">›</button></div>
+<div id="onb" class="onb" hidden role="dialog" aria-modal="true" aria-labelledby="onbt"></div>
+<div id="toast" role="status" aria-live="polite"></div>
+<script src="../../vendor/leaflet.js"></script><script src="../../vendor/leaflet.markercluster.js"></script><script src="../shared/core.js"></script><script src="app.js" type="module"></script></body></html>

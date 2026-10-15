@@ -1,0 +1,7 @@
+const V="plesuj-v4-1",SHELL=["./","index.html","style.css","app.js","manifest.webmanifest","icon-192.png","../shared/core.js","../shared/kraje.json","../../data/plesy.json","../../data/psc.json","../../vendor/leaflet.js","../../vendor/leaflet.markercluster.js","../../vendor/leaflet.css","../../vendor/MarkerCluster.css","../../vendor/MarkerCluster.Default.css"];
+self.addEventListener("install",e=>{e.waitUntil(caches.open(V).then(c=>c.addAll(SHELL)).then(()=>self.skipWaiting()))});
+self.addEventListener("activate",e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==V&&x.startsWith("plesuj-v4")).map(x=>caches.delete(x)))).then(()=>self.clients.claim()))});
+self.addEventListener("fetch",e=>{const u=new URL(e.request.url);if(e.request.method!="GET")return;
+ if(u.origin==location.origin&&/\/img\//.test(u.pathname)){e.respondWith(caches.open(V+"-img").then(async c=>(await c.match(e.request))||fetch(e.request).then(r=>{r.ok&&c.put(e.request,r.clone());return r})));return}
+ if(u.hostname.endsWith("tile.openstreetmap.org")){e.respondWith(caches.open(V+"-tiles").then(async c=>(await c.match(e.request))||fetch(e.request).then(r=>{c.put(e.request,r.clone());return r})));return}
+ if(u.origin==location.origin)e.respondWith(caches.open(V).then(async c=>{const hit=await c.match(e.request,{ignoreSearch:true});const net=fetch(e.request).then(r=>{r.ok&&c.put(e.request,r.clone());return r}).catch(()=>hit);return hit||net}))});

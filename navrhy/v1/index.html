@@ -1,0 +1,21 @@
+<!doctype html><html lang="cs"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Plesuj – návrh 1</title><link rel="stylesheet" href="../../vendor/leaflet.css"><link rel="stylesheet" href="../../vendor/MarkerCluster.css"><link rel="stylesheet" href="../../vendor/MarkerCluster.Default.css"><link rel="stylesheet" href="style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💃</text></svg>"></head><body>
+<header><a class="brand" href="./">💃 Plesuj</a><span class="tag">Plesy a bály v celé ČR</span><a class="back" href="../">← všechny návrhy</a></header>
+<div class="layout">
+<aside><form id="f" onsubmit="return false">
+<label>Hledat<input id="q" type="search" placeholder="název, obec, kapela…"></label>
+<label>PSČ<input id="psc" inputmode="numeric" maxlength="6" placeholder="např. 50002"></label>
+<label><span>Okruh: <b id="rv">25</b> km</span><input id="r" type="range" min="5" max="150" step="5" value="25"></label>
+<small id="pscmsg"></small>
+<div class="row"><label>Od<input id="od" type="date"></label><label>Do<input id="do" type="date"></label></div>
+<label>Typ<select id="typ"><option value="">všechny typy</option></select></label>
+<label>Vstupné max.<select id="cena"><option value="">bez omezení</option><option value="0">zdarma</option><option>100</option><option>200</option><option>300</option><option>500</option></select></label>
+<label>Řadit<select id="sort"><option value="datum">podle data</option><option value="vzd">podle vzdálenosti</option><option value="cena">podle ceny</option></select></label>
+<label class="ck"><input type="checkbox" id="nev"> i plesy s neověřeným místem</label>
+<label class="ck"><input type="checkbox" id="past"> i proběhlé plesy</label>
+<button type="reset" id="reset">Zrušit filtry</button></form></aside>
+<main><div class="bar"><b id="count"></b><div class="tabs" role="tablist"><button class="on" data-v="list">Seznam</button><button data-v="map">Mapa</button></div></div>
+<ol id="list"></ol><div id="map" hidden></div></main></div>
+<dialog id="dlg"><button class="x" onclick="dlg.close()" aria-label="Zavřít">×</button><div id="det"></div></dialog>
+<script src="../../vendor/leaflet.js"></script><script src="../../vendor/leaflet.markercluster.js"></script><script src="../shared/core.js"></script><script src="app.js"></script></body></html>
