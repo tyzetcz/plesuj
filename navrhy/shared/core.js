@@ -22,6 +22,9 @@ const illu=p=>`${B}img/typ/${kind(p)}.webp`;
 const imgOf=(p,thumb)=>poster(p,thumb)||illu(p);
 const host=u=>{try{return new URL(u).hostname.replace(/^www\./,"")}catch(e){return u}};
 const place=p=>[p.misto_budova,p.obec].filter(Boolean).join(", ");
+const loni=(p,full)=>p.misto_loni?`<span class="loni" title="Místo letošního ročníku zatím nebylo zveřejněno; údaj je z ročníku ${esc(p.misto_loni_rok)}, neověřeno"><span class="loni-i" aria-hidden="true">ⓘ</span> Místo zatím nezveřejněno – loňský ročník: ${esc(p.misto_loni)} (${esc(p.misto_loni_rok)})${full&&p.misto_loni_zdroj?` · <a href="${esc(p.misto_loni_zdroj)}" target="_blank" rel="noopener">zdroj</a>`:""}</span>`:"";
+const approxTxt=p=>p.poloha_loni?"místo loňského ročníku":"střed obce";
+(function(){if(typeof document=="undefined"||document.getElementById("loni-css"))return;const st=document.createElement("style");st.id="loni-css";st.textContent=".loni{display:block;font-size:.88em;opacity:.72;font-style:italic;margin-top:2px}.loni-i{font-style:normal;font-weight:700}.loni a{color:inherit;text-decoration:underline}";document.head.appendChild(st)})();
 const slug=s=>norm(s).replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
 let PSC={};
 function pscLookup(v){v=(v||"").replace(/\s/g,"");if(!/^\d{5}$/.test(v))return null;let h=PSC[v],near=null;
@@ -66,5 +69,5 @@ function posterHTML(p,alt){const i=pimg(p);if(!i)return `<img src="${illu(p)}" a
  return `${i.fit=="contain"?`<img class="pbg" src="${i.src}" alt="" aria-hidden="true" loading="lazy">`:""}<img class="pimg" src="${i.src}" width="${i.w}" height="${i.h}" alt="${alt===false?"":"Plakát: "+esc(title(p))}" loading="lazy" decoding="async" style="object-fit:${i.fit};object-position:${i.pos}">`}
 const portraitFirst=L=>L.slice().sort((a,b)=>(pimg(b)?.portrait?1:0)-(pimg(a)?.portrait?1:0));
 
-window.PC={title,pimg,posterHTML,portraitFirst,B,esc,norm,MES,MESL,MES2,DNY,today,cz,czl,dow,km,plural,nPlesu,bands,kind,poster,illu,imgOf,host,place,slug,pscLookup,filter,ics,downloadIcs,favs,load,tiles,types,get PSC(){return PSC}};
+window.PC={loni,approxTxt,title,pimg,posterHTML,portraitFirst,B,esc,norm,MES,MESL,MES2,DNY,today,cz,czl,dow,km,plural,nPlesu,bands,kind,poster,illu,imgOf,host,place,slug,pscLookup,filter,ics,downloadIcs,favs,load,tiles,types,get PSC(){return PSC}};
 })();

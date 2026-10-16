@@ -23,6 +23,7 @@ def price(t):
     n = [int(x) for x in re.findall(r"(?<![\d.])\d{2,5}(?![\d.])", t2)] if re.search(r"Kč|,-", t2) else []
     n = [x for x in n if x > 0] or ([0] if re.search(r"zdarma|volný", t or "", re.I) else [])
     return min(n) if n else None
+LONI = json.load(open("/workspace/plesy/work/audit/misto_loni.json")) if pathlib.Path("/workspace/plesy/work/audit/misto_loni.json").exists() else {}
 out = []
 with open(src, encoding="utf-8-sig") as f:
     for i, r in enumerate(csv.DictReader(f, delimiter=";")):
@@ -33,6 +34,11 @@ with open(src, encoding="utf-8-sig") as f:
         d = {k: v for k, v in r.items() if v and k not in ("gps_lat", "gps_lon")}
         d.update(id=i + 1, lat=lat, lon=lon, priblizne=approx, cena_num=price(r["cena_vstupenky"]),
                  zdroje=_zdroje(r["zdroj_url"]))
+        _l = LONI.get(r.get("kod", ""))
+        if _l and not r.get("misto_budova"):
+            d.update(misto_loni=_l["misto_loni"], misto_loni_rok=_l["misto_loni_rok"], misto_loni_zdroj=_l["misto_loni_zdroj"])
+            if _l.get("lat") is not None and (lat is None or approx):
+                d.update(lat=_l["lat"], lon=_l["lon"], priblizne=True, poloha_loni=True)
         d.pop("zdroj_url", None); d.pop("kod", None); d.pop("plakat_kod", None); d.pop("nazev_puvodni", None)
         d["overeno"] = r.get("overeno", "ano") != "ne"
         k = r.get("plakat_kod") or hashlib.sha1(f"{r['nazev']}|{r['datum']}|{r['obec']}".encode()).hexdigest()[:12]
