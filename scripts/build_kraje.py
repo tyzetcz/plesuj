@@ -8,6 +8,9 @@ for p in P:
   rs=OB.get(p['obec'],[]);ps=(p.get('psc') or '').replace(' ','')
   r=next((x for x in rs if x['PSČ']==ps),rs[0] if rs else None)
   if r: out[str(p['id'])]=r['Kraj']
+  elif p.get('lat'):
+    best=min((r for v in OB.values() for r in v if r.get('Latitude')),key=lambda r:(float(r['Latitude'])-p['lat'])**2+((float(r['Longitude'])-p['lon'])*0.65)**2)
+    out[str(p['id'])]=best['Kraj']
   else: miss+=1
 json.dump(out,open('navrhy/shared/kraje.json','w'),ensure_ascii=False)
 print(len(out),'bez kraje',miss)
