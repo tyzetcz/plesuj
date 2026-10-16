@@ -10,7 +10,7 @@ for p in P:
   if r: out[str(p['id'])]=r['Kraj']
   elif p.get('lat'):
     best=min((r for v in OB.values() for r in v if r.get('Latitude')),key=lambda r:(float(r['Latitude'])-p['lat'])**2+((float(r['Longitude'])-p['lon'])*0.65)**2)
-    out[str(p['id'])]=best['Kraj']
+    out[str(p['id'])]='Hlavní město Praha' if best['Kraj'].startswith('Hlavní') or p['obec'] in ('Přední Kopanina',) else best['Kraj']
   else: miss+=1
 json.dump(out,open('navrhy/shared/kraje.json','w'),ensure_ascii=False)
 print(len(out),'bez kraje',miss)
